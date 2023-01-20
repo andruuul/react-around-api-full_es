@@ -1,0 +1,13 @@
+.header__link {
+  padding-right: 0;
+  display: flex;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 22px;
+  text-decoration: none;
+  font-family: 'Inter';
+  color: #a9a9a9;
+  margin: 0;
+  height: min-content;
+  white-space: nowrap;
+}

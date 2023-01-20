@@ -1,0 +1,7 @@
+.profile-grid__information {
+  padding: 0 0 0 24px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: center;
+}
