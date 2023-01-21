@@ -12,20 +12,6 @@ function orFailUsers() {
   throw new NotFoundError('Usuario no encontrado');
 }
 
-/*
-function errorMessagesUsers(err) {
-  if (err.name === 'ValidationError') {
-    res.status(400).send({ message: 'Datos no válidos' });
-  } else if (err.name === 'CastError' || err.name === 'TypeError') {
-    res.status(404).send({ message: 'Usuario no encontrado' });
-  } else if (err.name === 'MongoError') {
-    res.status(409).send({ message: 'El usuario ya existe' });
-  } else {
-    res.status(500).send({ message: 'Ha ocurrido un error en el servidor' });
-  }
-}
-*/
-
 module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .select('+password')

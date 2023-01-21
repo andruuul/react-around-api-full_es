@@ -3,7 +3,8 @@ const dotenv = require('dotenv');
 const AuthError = require('../errors/auth-err');
 
 dotenv.config();
-const { NODE_ENV, JWT_SECRET } = process.env;
+const { NODE_ENV = 'development', JWT_SECRET = 'super-secret-password' } = process.env;
+//Así lo almaceno localmente?
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
@@ -18,7 +19,7 @@ module.exports = (req, res, next) => {
   try {
       payload = jwt.verify(
         token,
-        'super-secret-password'
+        'super-secret-password',
         //NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret'
       );
   } catch (err) {
