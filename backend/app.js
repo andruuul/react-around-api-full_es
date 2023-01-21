@@ -13,7 +13,17 @@ mongoose.connect('mongodb://localhost:27017/aroundb');
 app.use(express.json({ extended: true })); // para parsear application/json
 app.use(express.urlencoded({ extended: true })); // para el formato de datos tradicional GET form
 
-app.use('/cards', /*auth,*/ cardsRouter); //Protege todas las rutas con autorización, excepto la página de registro y la página de inicio de sesión. con el middleware auth
+/*
+app.use((req, res, next) => {
+  req.user = {
+    _id: '6399f09eb258712c41aa9ea9',
+  };
+
+  next();
+});
+*/
+
+app.use('/cards', auth, cardsRouter); //Protege todas las rutas con autorización, excepto la página de registro y la página de inicio de sesión. con el middleware auth
 app.use('/users', auth, usersRouter);
 
 app.post('/signin', login);

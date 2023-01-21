@@ -35,8 +35,8 @@ module.exports.getAllUsers = (req, res, next) => {
 
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.id)
-    .orFail(orFailUsers)
     .select('+password')
+    .orFail(orFailUsers)
     .then((user) => res.send({ data: user }))
     .catch(next);
 };
@@ -60,8 +60,8 @@ module.exports.createUser = (req, res, next) => {
 module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true }) //activar la validación
-    .orFail(orFailUsers)
     .select('+password')
+    .orFail(orFailUsers)
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -74,8 +74,8 @@ module.exports.updateUser = (req, res, next) => {
 module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-    .orFail(orFailUsers)
     .select('+password')
+    .orFail(orFailUsers)
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -91,13 +91,10 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   User.findOne({ email })
     .select('+password')
+    .orFail(orFailUsers)
     .then((user) => {
-      if (!user) {
-        throw new AuthError('Usuario no encontrado');
-      } else {
-        req._id = user._id;
-        return bcrypt.compare(password, user.password);
-      }
+      req._id = user._id;
+      return bcrypt.compare(password, user.password);
     })
     .then((matched) => {
       if (!matched) {
@@ -115,3 +112,14 @@ module.exports.login = (req, res, next) => {
     })
     .catch(next);
 }
+
+module.exports.getUsersMe = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Not found');
+      }
+      return res.status(200).send(user);
+    })
+    .catch((err) => next(err));
+};
