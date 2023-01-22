@@ -1,0 +1,9 @@
+.popup-image__text {
+  font-family: 'Inter';
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 1.25;
+  color: #FFFFFF;
+  align-self: flex-start;
+  
+}

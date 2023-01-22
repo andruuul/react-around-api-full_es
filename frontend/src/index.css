@@ -1,0 +1,241 @@
+@import url(./vendor/normalize.css);
+@import url(./blocks/auth/__container/auth__container.css);
+@import url(./blocks/auth/__link/auth__link.css);
+@import url(./blocks/auth/__nav/auth__nav.css);
+@import url(./blocks/auth/__title/auth__title.css);
+@import url(./blocks/auth/auth.css);
+@import url(./blocks/header/header.css);
+@import url(./blocks/header/__logo/header__logo.css);
+@import url(./blocks/header/__link/header__link.css);
+@import url(./blocks/header/__email/header__email.css);
+@import url(./blocks/content/content.css);
+@import url(./blocks/content/profile-grid/profile-grid.css);
+@import url(./blocks/content/profile-grid/__avatar/profile-grid__avatar.css);
+@import url(./blocks/content/profile-grid/__avatar-box/profile-grid__avatar-box.css);
+@import url(./blocks/content/profile-grid/__avatar-edit/profile-grid__avatar-edit.css);
+@import url(./blocks/content/profile-grid/__information/profile-grid__information.css);
+@import url(./blocks/content/profile-grid/__username/profile-grid__username.css);
+@import url(./blocks/content/profile-grid/__edit-button/profile-grid__edit-button.css);
+@import url(./blocks/content/profile-grid/__subtitle/profile-grid__subtitle.css);
+@import url(./blocks/content/profile-grid/__add-button/profile-grid__add-button.css);
+@import url(./blocks/content/elements-grid/elements-grid.css);
+@import url(./blocks/content/elements-grid/__card/elements-grid__card.css);
+@import url(./blocks/content/elements-grid/__photo/elements-grid__photo.css);
+@import url(./blocks/content/elements-grid/__description/elements-grid__description.css);
+@import url(./blocks/content/elements-grid/__place-name/elements-grid__place-name.css);
+@import url(./blocks/content/elements-grid/__like-section/elements-grid__like-section.css);
+@import url(./blocks/content/elements-grid/__like-button/elements-grid__like-button.css);
+@import url(./blocks/content/elements-grid/__likes/elements-grid__likes.css);
+@import url(./blocks/content/elements-grid/__delete-button/elements-grid__delete-button.css);
+@import url(./blocks/footer/footer.css);
+@import url(./blocks/footer/__copyright/footer__copyright.css);
+@import url(./blocks/popup/popup.css);
+@import url(./blocks/popup/__title-and-button/popup__title-and-button.css);
+@import url(./blocks/popup/__close-button/popup__close-button.css);
+@import url(./blocks/popup/__title/popup__title.css);
+@import url(./blocks/popup/__title-confirmation/popup__title-confirmation.css);
+@import url(./blocks/popup/__input/popup__input.css);
+@import url(./blocks/popup/__input/_type_error/popup__input_type_error.css);
+@import url(./blocks/popup/__form/popup__form.css);
+@import url(./blocks/popup/__input-error/popup__input-error.css);
+@import url(./blocks/popup/__input-error-lower/popup____input-error-lower.css);
+@import url(./blocks/popup/__save-button/popup__save-button.css);
+@import url(./blocks/popup/__confirmation/popup__confirmation.css);
+@import url(./blocks/popup/__avatar/popup__avatar.css);
+@import url(./blocks/overlay/overlay.css);
+@import url(./blocks/popup-image/popup-image.css);
+@import url(./blocks/popup-image/__image/popup-image__image.css);
+@import url(./blocks/popup-image/__close-button/popup-image__close-button.css);
+@import url(./blocks/popup-image/__text/popup-image__text.css);
+@import url(./blocks/form/form.css);
+@import url(./blocks/form/__input_dark/form__input_dark.css);
+@import url(./blocks/form/__submit-button_dark/form__submit-button_dark.css);
+@import url(./blocks/form/__container/form__container.css);
+@import url(./blocks/form/__reset-button/form__reset-button.css);
+@import url(./blocks/form/__tooltip/-message/form__tooltip-message.css);
+@import url(./blocks/form/__tooltip/_error/form__tooltip_error.css);
+@import url(./blocks/form/__tooltip/_success/form__tooltip_success.css);
+@import url(./blocks/form/__tooltip/form__tooltip.css);
+
+
+@font-face {
+  font-family: 'Inter';
+  src: url(./fonts/Inter-Regular.woff2) format("woff2"),
+  url(./fonts/Inter-Regular.woff) format("woff");
+}
+
+@font-face {
+  font-family: 'Inter-Black';
+  src: url(./fonts/Inter-Black.woff2) format("woff2");
+  src: url(./fonts/Inter-Black.woff) format("woff");
+}
+
+.page {
+  background: #000000;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  flex-wrap: wrap;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 880px) {
+
+  .header__logo {
+    transform: scale(0.72);
+  }
+
+  .profile-grid {
+    width: 80%;
+    justify-self: center;
+    grid-template-columns: 120px 1fr 150px;
+  }
+
+  .profile-grid__username {
+    font-size: 22px;
+    line-height: 1.22;
+    text-align: center;
+    padding-top: 26px;
+  }
+
+  .profile-grid__subtitle {
+    font-size: 14px;
+    line-height: 1.21;
+    padding-bottom: 36px;
+  }
+
+  .profile-grid__edit-button {
+    transform: scale(0.60);
+    margin: 0 0 0 10px;
+    position: relative;
+    top: 26px;
+  }
+
+  .elements-grid {
+    grid-template-columns: 1fr 1fr;
+    margin: auto;
+  }
+
+}
+
+@media screen and (max-width: 595px) {
+  
+  .header__logo {
+    transform: scale(0.72);
+  }
+
+  .profile-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 0;
+    padding: 38px 0 36px;
+    margin: 0;
+  }
+
+  .profile-grid__username {
+    font-size: 22px;
+    line-height: 1.22;
+    text-align: center;
+    padding-top: 26px;
+  }
+
+  .profile-grid__subtitle {
+    font-size: 14px;
+    line-height: 1.21;
+    text-align: center;
+    padding-bottom: 36px;
+  }
+
+  .profile-grid__information {
+    padding: 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .profile-grid__edit-button {
+    transform: scale(0.60);
+    margin: 0 0 0 10px;
+    position: relative;
+    top: 26px;
+  }
+
+  .profile-grid__add-button {
+    width: 285px;
+    height: 53px;
+    align-self: center;
+    justify-content: center;
+    background: url('./images/add-button-2.svg');
+    background-repeat: no-repeat;
+    display: flex;
+    justify-self: center;
+  }
+
+  .elements-grid {
+    grid-template-columns: 1fr;
+    margin: auto;
+  }
+
+  .footer__copyright {
+    padding-top: 50px;
+    padding-bottom: 36px;
+  }
+
+  .popup {
+    width: 282px;
+    height: 322px;
+  }
+
+  .popup__title {
+    font-size: 18px;
+    padding-left: 22px;
+    padding-bottom: 25px;
+    padding-top: 9px;
+  }
+
+  .popup__close-button {
+    left: 0;
+    bottom: 55px;
+    transform: scale(.65);
+  }
+  .popup__input {
+    width: 238px;
+    margin-bottom: 50px;
+  }
+
+  .popup__input-error {
+    top: 123px;
+    left: 20px;
+    max-width: 240px;
+  }
+
+  .popup__input-error-lower {
+    top: 203px;
+    left: 20px;
+    max-width: 240px;
+  }
+
+  .popup__save-button {
+    width: 238px;
+    height: 46px;
+    font-size: 14px;
+  }
+
+  .popup-image__container {
+    max-width: 240px;
+    max-height: 75vh;
+  }
+
+  .popup-image__image {
+    max-width: 240px;
+    max-height: 75vh;
+  }
+
+  .popup-image__close-button {
+    left: 30px;
+    top: 3px;
+    transform: scale(.65);
+  }
+}
+

@@ -1,15 +1,17 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const cardsRouter = require('./routes/cards');
 const usersRouter = require('./routes/users');
-const auth = require('./middlewares/auth')
+const auth = require('./middlewares/auth');
 const { createUser, login } = require('./controllers/users');
 
-
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 const app = express();
 mongoose.connect('mongodb://localhost:27017/aroundb');
 
+app.use(cors());
+app.options('*', cors());
 app.use(express.json({ extended: true })); // para parsear application/json
 app.use(express.urlencoded({ extended: true })); // para el formato de datos tradicional GET form
 
@@ -23,8 +25,8 @@ app.use((req, res, next) => {
 });
 */
 
-app.use('/cards', auth, cardsRouter); //Protege todas las rutas con autorización, excepto la página de registro y la página de inicio de sesión. con el middleware auth
-app.use('/users', auth, usersRouter);
+app.use('/cards', /*auth,*/ cardsRouter);
+app.use('/users', /*auth,*/ usersRouter);
 
 app.post('/signin', login);
 app.post('/signup', createUser);

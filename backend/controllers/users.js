@@ -1,7 +1,6 @@
-const User = require('../models/user');
 const bcrypt = require('bcryptjs');
-const jwt = require ('jsonwebtoken');
-//const dotenv = require('dotenv');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 
 const BadRequestError = require('../errors/bad-request-err');
 const NotFoundError = require('../errors/not-found-err');
@@ -28,10 +27,14 @@ module.exports.getUserById = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
   bcrypt
     .hash(password, 10)
-    .then((hash) => User.create({ name, about, avatar, email, password: hash }))
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
     .then((user) => res.status(201).send({ _id: user._id }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -39,13 +42,17 @@ module.exports.createUser = (req, res, next) => {
       } else if (err.name === 'MongoError') {
         throw new ConflictError('El usuario ya existe');
       }
-      next(err)
+      next(err);
     });
 };
 
 module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true }) //activar la validación
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, about },
+    { new: true, runValidators: true },
+  )
     .select('+password')
     .orFail(orFailUsers)
     .then((user) => res.send({ data: user }))
@@ -66,10 +73,10 @@ module.exports.updateAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError(
-          'Datos no válidos'
+          'Datos no válidos',
         );
       }
-      next(err)
+      next(err);
     });
 };
 
@@ -88,16 +95,16 @@ module.exports.login = (req, res, next) => {
       }
       const token = jwt.sign(
         { _id: req._id },
-        'super-secret-password', 
-        //NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
-        { expiresIn: '7d' }
+        'dev-secret',
+        { expiresIn: '7d' },
       );
+      console.log(token);
       res.header('authorization', `Bearer ${token}`);
       res.cookie('token', token, { httpOnly: true });
       res.status(200).send({ token });
     })
     .catch(next);
-}
+};
 
 module.exports.getUsersMe = (req, res, next) => {
   User.findById(req.user._id)

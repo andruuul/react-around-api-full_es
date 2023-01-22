@@ -1,0 +1,7 @@
+.elements-grid__like-section {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 22px;
+    max-height: 35px;
+}
