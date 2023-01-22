@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const cardsRouter = require('./routes/cards');
 const usersRouter = require('./routes/users');
-const auth = require('./middlewares/auth');
 const { createUser, login } = require('./controllers/users');
 
 const { PORT = 3001 } = process.env;
@@ -25,11 +24,11 @@ app.use((req, res, next) => {
 });
 */
 
-app.use('/cards', /*auth,*/ cardsRouter);
-app.use('/users', /*auth,*/ usersRouter);
+app.use('/cards', cardsRouter);
+app.use('/users', usersRouter);
 
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', login); //Aquí no pasa nada, no se activan mis console.log
+app.post('/signup', createUser); //en esta tampoco
 
 app.get('*', (req, res) => {
   res.status(404);

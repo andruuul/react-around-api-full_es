@@ -28,6 +28,7 @@ function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
+  const [token, setToken] = useState(localStorage.getItem('token'));
   
   const [tooltipMode, setTooltipMode] = useState(false);
 
@@ -62,16 +63,16 @@ function App() {
     setIsInfoToolTipOpen(true);
   }
 
-  function handleUpdateUser({name, about}) {
+  function handleUpdateUser({ name, about }) {
     api
-      .editProfile(name,about)
+      .editProfile(name, about, token)
       .then((res)=>{setCurrentUser(res)})
       .then(closeAllPopups)
   }
 
-  function handleUpdateAvatar({avatar}) {
+  function handleUpdateAvatar({ avatar }) {
     api
-      .changeAvatar(avatar)
+      .changeAvatar(avatar, token)
       .then((res)=>{setCurrentUser(res)})
       .then(closeAllPopups)
   }
@@ -79,12 +80,6 @@ function App() {
 
   const [cards, setCards] = useState([])
 
-  useEffect(() => {
-    api
-      .getInitialCards()
-      .then(res => setCards(res))
-      .catch(err => console.log(err));
-  }, [])
 
   function handleCardClick(card) {
     setSelectedCard(card);
@@ -93,7 +88,7 @@ function App() {
   function handleCardLike(card) {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
     api
-      .changeLikeCardStatus(card._id, isLiked)
+      .changeLikeCardStatus(card._id, isLiked, token)
       .then((newCard) => {
         setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
       })
@@ -101,7 +96,7 @@ function App() {
 
   function handleCardDelete(cardId) {
     api
-      .deleteCard(cardId)
+      .deleteCard(cardId, token)
       .then(
         setCards((state) => state.filter((c) => c._id !== cardId))
       )
@@ -109,7 +104,7 @@ function App() {
 
   function handleAddPlaceSubmit(cardData) {
     api
-      .addNewCard(cardData)
+      .addNewCard(cardData, token)
       .then(newCard => setCards([newCard, ...cards]))
       .then(closeAllPopups)
   }
@@ -145,13 +140,15 @@ function App() {
 
   useEffect(() => {
     api
-      .getProfileInfo()
+      .getProfileInfo(token)
       .then(res => setCurrentUser(res))
+    api
+      .getInitialCards(token)
+      .then(res => setCards(res))
       .catch(err => console.log(err));
-  }, [])
+  }, [token])
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
     if(token) {
       auth
         .checkToken(token)
@@ -166,7 +163,7 @@ function App() {
           }
         });
       }
-    }, [loggedIn, history])
+    }, [token, history])
 
   function handleLogin() {
     setLoggedIn(true);
@@ -185,6 +182,8 @@ function App() {
       .authorize(email, password)
       .then((user) => {
         if (user && user.token) {
+          setToken(user.token);
+          localStorage.setItem('token', user.token);
           handleLogin();
         } else {
           if (!email || !password) {

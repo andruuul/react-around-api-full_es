@@ -4,7 +4,6 @@ import logoPath from '../images/logo.svg'
 
 function Header({ linkTo, linkDescription, onLogout, email }) {
   const token = localStorage.getItem('token')
-
   return (
   <>
     <header className='header'>

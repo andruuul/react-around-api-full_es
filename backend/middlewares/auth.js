@@ -5,8 +5,11 @@ module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
+    console.log('NO AUTH');
     throw new AuthError('Authorization Required');
   }
+
+  console.log('yes AUTH');
 
   const token = authorization.replace('Bearer ', '');
   let payload;

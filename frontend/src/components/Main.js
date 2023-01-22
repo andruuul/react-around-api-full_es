@@ -24,7 +24,6 @@ function Main({onEditAvatarClick, onAddPlaceClick, onEditProfileClick, onCardCli
       </section>
 
       <section className="elements-grid">
-        {console.log(cards)}
         {cards.map(card => {
           return (
             <Card 

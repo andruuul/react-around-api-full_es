@@ -19,7 +19,7 @@ module.exports.getAllUsers = (req, res, next) => {
 };
 
 module.exports.getUserById = (req, res, next) => {
-  User.findById(req.params.id)
+  User.findById({ _id: req.params.id })
     .select('+password')
     .orFail(orFailUsers)
     .then((user) => res.send({ data: user }))
@@ -30,12 +30,16 @@ module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
+  console.log('registrado 1');
   bcrypt
     .hash(password, 10)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => res.status(201).send({ _id: user._id }))
+    .then((user) => {
+      res.status(201).send({ _id: user._id });
+      console.log('registrado 2');
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError('Datos no válidos');
@@ -82,26 +86,32 @@ module.exports.updateAvatar = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
+  console.log('22222');
+
   User.findOne({ email })
     .select('+password')
     .orFail(orFailUsers)
     .then((user) => {
+      console.log('3333');
       req._id = user._id;
-      return bcrypt.compare(password, user.password);
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            throw new AuthError('Datos incorrectos');
+          }
+          return user;
+        });
     })
-    .then((matched) => {
-      if (!matched) {
-        throw new AuthError('Datos incorrectos');
-      }
+    .then((user) => {
+      console.log('4444');
       const token = jwt.sign(
         { _id: req._id },
         'dev-secret',
         { expiresIn: '7d' },
       );
-      console.log(token);
       res.header('authorization', `Bearer ${token}`);
       res.cookie('token', token, { httpOnly: true });
-      res.status(200).send({ token });
+      res.status(200).send({ token, name: user.name, email: user.email });
     })
     .catch(next);
 };
@@ -112,7 +122,14 @@ module.exports.getUsersMe = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Not found');
       }
-      return res.status(200).send(user);
+      console.log(user);
+      return res.status(200).send({
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+      });
     })
     .catch((err) => next(err));
 };
