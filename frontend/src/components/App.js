@@ -32,7 +32,6 @@ function App() {
   
   const [tooltipMode, setTooltipMode] = useState(false);
 
-
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
@@ -88,9 +87,7 @@ function App() {
       .then(closeAllPopups)
   }
 
-
   const [cards, setCards] = useState([])
-
 
   function handleCardClick(card) {
     setSelectedCard(card);
@@ -151,17 +148,15 @@ function App() {
 
   useEffect(() => {
     if(token) {
-      console.log(token)
       auth
         .checkToken(token)
-        .then((data) => {
-          console.log('1', data)
-          console.log('2', data.email)
-          console.log('3', data.data.email)
+        .then((res) => {
+          console.log('1', res)
+          console.log('2', res.email)
+          console.log('3', res.data.email)
 
-          setEmail(data.data.email);
+          setEmail(res.data.email);
           handleLogin();
-          history.push("/main");
         })
         .catch((err) => {
           if (err === 401) {
@@ -169,7 +164,7 @@ function App() {
           }
         });
       }
-    }, [token, history])
+    }, [token])
 
   function handleLogin() {
     setLoggedIn(true);

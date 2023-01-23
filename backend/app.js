@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const cardsRouter = require('./routes/cards');
 const usersRouter = require('./routes/users');
@@ -12,7 +11,6 @@ app.use(cors());
 app.options('*', cors());
 
 mongoose.connect('mongodb://localhost:27017/aroundb');
-app.use(bodyParser.json());
 
 app.use(express.json({ extended: true })); // para parsear application/json
 app.use(express.urlencoded({ extended: true })); // para el formato de datos tradicional GET form
