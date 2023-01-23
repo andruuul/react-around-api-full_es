@@ -13,16 +13,21 @@ function orFailUsers() {
 
 module.exports.getAllUsers = (req, res, next) => {
   User.find({})
-    .select('+password')
-    .then((users) => res.send({ data: users }))
+    .then((users) => res.status(200).send({ data: users }))
     .catch(next);
 };
 
 module.exports.getUserById = (req, res, next) => {
   User.findById({ _id: req.params.id })
-    .select('+password')
     .orFail(orFailUsers)
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
+    .catch(next);
+};
+
+module.exports.getUsersMe = (req, res, next) => {
+  User.findById(req.user._id)
+    .orFail(orFailUsers)
+    .then((user) => res.status(200).send({ user }))
     .catch(next);
 };
 
@@ -30,15 +35,18 @@ module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  console.log('registrado 1');
-  bcrypt
-    .hash(password, 10)
+  User.findOne({ email })
+    .then((user) => {
+      if (user) {
+        throw new ConflictError('El usuario ya existe');
+      }
+      return bcrypt.hash(password, 10);
+    })
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
     .then((user) => {
-      res.status(201).send({ _id: user._id });
-      console.log('registrado 2');
+      res.status(201).send({ _id: user._id, email: user.email });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -86,24 +94,22 @@ module.exports.updateAvatar = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-  console.log('22222');
-
   User.findOne({ email })
     .select('+password')
     .orFail(orFailUsers)
     .then((user) => {
-      console.log('3333');
-      req._id = user._id;
+      if (!user) {
+        throw new AuthError('email o contraseña incorrectos');
+      }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new AuthError('Datos incorrectos');
+            throw new AuthError(('email o contraseña incorrectos'));
           }
           return user;
         });
     })
     .then((user) => {
-      console.log('4444');
       const token = jwt.sign(
         { _id: req._id },
         'dev-secret',
@@ -114,22 +120,4 @@ module.exports.login = (req, res, next) => {
       res.status(200).send({ token, name: user.name, email: user.email });
     })
     .catch(next);
-};
-
-module.exports.getUsersMe = (req, res, next) => {
-  User.findById(req.user._id)
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Not found');
-      }
-      console.log(user);
-      return res.status(200).send({
-        _id: user._id,
-        email: user.email,
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-      });
-    })
-    .catch((err) => next(err));
 };

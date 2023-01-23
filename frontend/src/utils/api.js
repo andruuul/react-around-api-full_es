@@ -1,6 +1,15 @@
 export class Api {
-  constructor({baseUrl}) {
+  constructor({baseUrl, headers}) {
     this._baseUrl = baseUrl;
+    this._headers = headers;
+  }
+
+  _getHeader() {
+    const token = localStorage.getItem('token');
+    return {
+      ...this._headers,
+      Authorization: `Bearer ${token}`,
+    }
   }
 
   _request(url, options) {
@@ -14,31 +23,22 @@ export class Api {
     return Promise.reject(`Error: ${res.status}`);
   }
 
-  getInitialCards(token) {
+  getInitialCards() {
     return this._request(`${this._baseUrl}/cards`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+      headers: this._getHeader(),
     })
   }
 
-  getProfileInfo(token) {
+  getProfileInfo() {
     return this._request(`${this._baseUrl}/users/me`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+      headers: this._getHeader(),
     })
   }
 
-  editProfile(name, about, token) {
+  editProfile(name, about) {
     return this._request(`${this._baseUrl}/users/me`, {
       method: "PATCH",
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+      headers: this._getHeader(),
       body: JSON.stringify({
         name: name,
         about: about,
@@ -46,13 +46,10 @@ export class Api {
     })
   }
 
-  addNewCard(cardData, token){
+  addNewCard(cardData){
     return this._request(`${this._baseUrl}/cards`, {
       method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+      headers: this._getHeader(),
       body: JSON.stringify({
         name: cardData.name, 
         link: cardData.link
@@ -60,42 +57,33 @@ export class Api {
     })
   }
 
-  deleteCard(cardId, token) {
+  deleteCard(cardId) {
     return this._request(`${this._baseUrl}/cards/${cardId}`, {
       method: "DELETE",
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+      headers: this._getHeader(),
     })
   }
 
-  changeAvatar(link, token) {
+  changeAvatar(link) {
     return this._request(`${this._baseUrl}/users/me/avatar`, {
       method: "PATCH",
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+      headers: this._getHeader(),
       body: JSON.stringify({
         avatar: link
       })
     })
   }
 
-  changeLikeCardStatus(cardId, isLiked, token) {
+  changeLikeCardStatus(cardId, isLiked) {
     if(isLiked) {
       return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
         method: "DELETE",
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers: this._getHeader(),
       })
     } else {
       return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
         method: "PUT",
-        headers: this._headers
+        headers: this._getHeader(),
       })
     }
   }
@@ -104,7 +92,9 @@ export class Api {
 
 const api = new Api({
   baseUrl: "http://localhost:3001",
-  //baseUrl: "https://around.nomoreparties.co/v1/web_es_cohort_02",
+  headers: {
+    'Content-Type': 'application/json'
+  }
 });
 
-export default api 
+export default api;

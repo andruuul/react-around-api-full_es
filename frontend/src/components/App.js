@@ -38,6 +38,17 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isInfoToolTipOpen, setIsInfoToolTipOpen] = useState(false);
 
+  useEffect(() => {
+    Promise.all([api.getProfileInfo(), api.getInitialCards()])
+      .then(([info, card]) => {
+        setCurrentUser(info);
+        setCards(card);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [loggedIn])
+
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
   }
@@ -65,14 +76,14 @@ function App() {
 
   function handleUpdateUser({ name, about }) {
     api
-      .editProfile(name, about, token)
+      .editProfile(name, about)
       .then((res)=>{setCurrentUser(res)})
       .then(closeAllPopups)
   }
 
   function handleUpdateAvatar({ avatar }) {
     api
-      .changeAvatar(avatar, token)
+      .changeAvatar(avatar)
       .then((res)=>{setCurrentUser(res)})
       .then(closeAllPopups)
   }
@@ -88,7 +99,7 @@ function App() {
   function handleCardLike(card) {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
     api
-      .changeLikeCardStatus(card._id, isLiked, token)
+      .changeLikeCardStatus(card._id, isLiked)
       .then((newCard) => {
         setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
       })
@@ -96,7 +107,7 @@ function App() {
 
   function handleCardDelete(cardId) {
     api
-      .deleteCard(cardId, token)
+      .deleteCard(cardId)
       .then(
         setCards((state) => state.filter((c) => c._id !== cardId))
       )
@@ -104,7 +115,7 @@ function App() {
 
   function handleAddPlaceSubmit(cardData) {
     api
-      .addNewCard(cardData, token)
+      .addNewCard(cardData)
       .then(newCard => setCards([newCard, ...cards]))
       .then(closeAllPopups)
   }
@@ -139,20 +150,15 @@ function App() {
   };
 
   useEffect(() => {
-    api
-      .getProfileInfo(token)
-      .then(res => setCurrentUser(res))
-    api
-      .getInitialCards(token)
-      .then(res => setCards(res))
-      .catch(err => console.log(err));
-  }, [token])
-
-  useEffect(() => {
     if(token) {
+      console.log(token)
       auth
         .checkToken(token)
         .then((data) => {
+          console.log('1', data)
+          console.log('2', data.email)
+          console.log('3', data.data.email)
+
           setEmail(data.data.email);
           handleLogin();
           history.push("/main");
