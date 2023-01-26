@@ -13,13 +13,15 @@ function orFailUsers() {
 
 module.exports.getAllUsers = (req, res, next) => {
   User.find({})
+    .select('+password')
     .then((users) => res.status(200).send({ data: users }))
     .catch(next);
 };
 
 module.exports.getUserById = (req, res, next) => {
-  User.findById({ _id: req.params.id })
+  User.findById(req.params.id)
     .orFail(orFailUsers)
+    .select('+password')
     .then((user) => res.status(200).send({ data: user }))
     .catch(next);
 };
@@ -27,7 +29,10 @@ module.exports.getUserById = (req, res, next) => {
 module.exports.getUsersMe = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(orFailUsers)
-    .then((user) => res.status(200).send({ user }))
+    .select('+password')
+    .then((user) => {
+      res.status(200).send({ user });
+    })
     .catch(next);
 };
 
@@ -101,6 +106,7 @@ module.exports.login = (req, res, next) => {
       if (!user) {
         throw new AuthError('email o contraseña incorrectos');
       }
+      req._id = user._id;
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {

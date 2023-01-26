@@ -37,17 +37,6 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isInfoToolTipOpen, setIsInfoToolTipOpen] = useState(false);
 
-  useEffect(() => {
-    Promise.all([api.getProfileInfo(), api.getInitialCards()])
-      .then(([info, card]) => {
-        setCurrentUser(info);
-        setCards(card);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [loggedIn])
-
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
   }
@@ -75,14 +64,14 @@ function App() {
 
   function handleUpdateUser({ name, about }) {
     api
-      .editProfile(name, about)
+      .editProfile(name, about, token)
       .then((res)=>{setCurrentUser(res)})
       .then(closeAllPopups)
   }
 
   function handleUpdateAvatar({ avatar }) {
     api
-      .changeAvatar(avatar)
+      .changeAvatar(avatar, token)
       .then((res)=>{setCurrentUser(res)})
       .then(closeAllPopups)
   }
@@ -96,7 +85,7 @@ function App() {
   function handleCardLike(card) {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
     api
-      .changeLikeCardStatus(card._id, isLiked)
+      .changeLikeCardStatus(card._id, isLiked, token)
       .then((newCard) => {
         setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
       })
@@ -104,7 +93,7 @@ function App() {
 
   function handleCardDelete(cardId) {
     api
-      .deleteCard(cardId)
+      .deleteCard(cardId, token)
       .then(
         setCards((state) => state.filter((c) => c._id !== cardId))
       )
@@ -112,7 +101,7 @@ function App() {
 
   function handleAddPlaceSubmit(cardData) {
     api
-      .addNewCard(cardData)
+      .addNewCard(cardData, token)
       .then(newCard => setCards([newCard, ...cards]))
       .then(closeAllPopups)
   }
@@ -146,26 +135,6 @@ function App() {
       })
   };
 
-  useEffect(() => {
-    if(token) {
-      auth
-        .checkToken(token)
-        .then((res) => {
-          console.log('1', res)
-          console.log('2', res.email)
-          console.log('3', res.data.email)
-
-          setEmail(res.data.email);
-          handleLogin();
-        })
-        .catch((err) => {
-          if (err === 401) {
-            return console.log("Wrong token");
-          }
-        });
-      }
-    }, [token])
-
   function handleLogin() {
     setLoggedIn(true);
   }
@@ -186,6 +155,7 @@ function App() {
           setToken(user.token);
           localStorage.setItem('token', user.token);
           handleLogin();
+          redirect();
         } else {
           if (!email || !password) {
             throw new Error(
@@ -199,7 +169,6 @@ function App() {
           }
         }
       })
-      .then(() => {history.push('/main'); history.go()})
       .catch((err) => console.log(err));
   };
 
@@ -210,6 +179,36 @@ function App() {
       history.push('/signin');  
     }
   } 
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if(token) {
+      auth
+        .checkToken(token)
+        .then((res) => {
+          setEmail(res.data.email);
+          handleLogin();
+        })
+        .catch((err) => {console.log(err, "Wrong token")});
+      } else {
+        setLoggedIn(false);
+      }
+    }, [loggedIn, token])
+
+    useEffect(() => {
+      if (token) {
+      console.log(token)
+      Promise.all([api.getProfileInfo(token), api.getInitialCards(token)])
+        .then(([info, cards]) => {
+          setCurrentUser(info);
+          setCards(cards);
+        })
+        .catch((err) => {
+          console.log(err);
+        });} else {
+          console.log("notoken")
+        }
+    }, [token])
 
   return (
     (

@@ -37,7 +37,6 @@ function Login({
           <button
             type='submit'
             className='form__submit-button_dark'
-            onClick={handleLoginSubmit}
           >
             Log in
           </button>
