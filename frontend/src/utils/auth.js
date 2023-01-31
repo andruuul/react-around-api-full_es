@@ -40,7 +40,6 @@ export const authorize = (email, password) => {
 }
   
 export const checkToken = (token) => {
-  console.log('checkingtoken...')
   return fetch(`${BASE_URL}/users/me`, {
     method: 'GET',
     headers: {

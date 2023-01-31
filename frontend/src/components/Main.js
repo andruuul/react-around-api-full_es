@@ -1,12 +1,9 @@
 import React from 'react';
 import editProfilePicturePath from '../images/profile-edit-button.svg';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import Card from './Card';
 
 
-function Main({onEditAvatarClick, onAddPlaceClick, onEditProfileClick, onCardClick, cards, onCardLike, onCardDelete}) {
-
-  const currentUser = React.useContext(CurrentUserContext);
+function Main({onEditAvatarClick, onAddPlaceClick, onEditProfileClick, onCardClick, cards, onCardLike, onCardDelete, currentUser}) {
 
   return (
     <main className="content">
@@ -35,6 +32,7 @@ function Main({onEditAvatarClick, onAddPlaceClick, onEditProfileClick, onCardCli
               onCardClick={onCardClick} 
               onCardLike={onCardLike} 
               onCardDelete={onCardDelete}
+              currentUser={currentUser}
             />
           );
         })}

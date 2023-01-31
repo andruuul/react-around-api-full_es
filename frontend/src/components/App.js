@@ -65,14 +65,14 @@ function App() {
   function handleUpdateUser({ name, about }) {
     api
       .editProfile(name, about, token)
-      .then((res)=>{setCurrentUser(res)})
+      .then((res)=>{setCurrentUser(res.data)})
       .then(closeAllPopups)
   }
 
   function handleUpdateAvatar({ avatar }) {
     api
       .changeAvatar(avatar, token)
-      .then((res)=>{setCurrentUser(res)})
+      .then((res)=>{setCurrentUser(res.data)})
       .then(closeAllPopups)
   }
 
@@ -112,12 +112,10 @@ function App() {
   };
 
   function handleRegisterSubmit(e) {
-    console.log("1")
     e.preventDefault();
     auth
       .register(email, password)
       .then((res) => {
-        console.log("2")
         if (res) {
           handleToolTip('success');
           setTimeout(() => {
@@ -186,7 +184,7 @@ function App() {
       auth
         .checkToken(token)
         .then((res) => {
-          setEmail(res.data.email);
+          setEmail(res.email);
           handleLogin();
         })
         .catch((err) => {console.log(err, "Wrong token")});
@@ -196,19 +194,19 @@ function App() {
     }, [loggedIn, token])
 
     useEffect(() => {
+      const token = localStorage.getItem('token')
       if (token) {
-      console.log(token)
       Promise.all([api.getProfileInfo(token), api.getInitialCards(token)])
         .then(([info, cards]) => {
-          setCurrentUser(info);
-          setCards(cards);
+          setCurrentUser(info.user);
+          setCards(cards.data);
         })
         .catch((err) => {
           console.log(err);
         });} else {
-          console.log("notoken")
+          console.log("no token")
         }
-    }, [token])
+    }, [])
 
   return (
     (
@@ -222,7 +220,7 @@ function App() {
         history={history}
       />
       <Switch>
-        <ProtectedRoute exact path='/main' component={Main} onEditAvatarClick={handleEditAvatarClick} onAddPlaceClick={handleAddPlaceClick} onEditProfileClick={handleEditProfileClick} onCardClick={handleCardClick} cards={cards} onCardLike={handleCardLike} onCardDelete={handleCardDelete} />       
+        <ProtectedRoute exact path='/main' component={Main} onEditAvatarClick={handleEditAvatarClick} onAddPlaceClick={handleAddPlaceClick} onEditProfileClick={handleEditProfileClick} onCardClick={handleCardClick} cards={cards} onCardLike={handleCardLike} onCardDelete={handleCardDelete} currentUser={currentUser} />       
         <Route
           exact
           path='/signup'
