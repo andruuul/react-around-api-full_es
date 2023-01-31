@@ -1,8 +1,6 @@
 import React from 'react';
 
 function Card({card, onCardClick, onCardLike, onCardDelete, currentUser, }) { //reduje el número de parámetros que paso
-
-  console.log(card, currentUser._id)
   const isOwn = card.owner._id === currentUser._id;
   const cardDeleteButtonClassName = (`${isOwn ? '' : 'elements-grid__delete-button_hidden'}`)
   const isLiked = card.likes.some(i => i._id === currentUser._id);

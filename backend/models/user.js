@@ -20,24 +20,25 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator(v) {
-        /^(https?):\/\/(www\.)?[\d\w.~:/?%#[\]@!$&'()*+,;=]+[#/]*$/mg.test(v);
-      },
+      validator: (v) => validator.isURL(v),
+      message: 'URL no válida',
     },
     default: 'https://pictures.s3.yandex.net/resources/avatar_1604080799.jpg',
   },
   email: {
     type: String,
+    lowercase: true,
     required: true,
     unique: true,
     validate: {
       validator: (email) => validator.isEmail(email),
-      message: 'Email address not valid ',
+      message: 'Email no válido',
     },
   },
   password: {
     type: String,
     required: true,
+    minlength: 8,
     select: false,
   },
 });

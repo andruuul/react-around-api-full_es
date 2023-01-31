@@ -102,7 +102,7 @@ function App() {
   function handleAddPlaceSubmit(cardData) {
     api
       .addNewCard(cardData, token)
-      .then(newCard => setCards([newCard, ...cards]))
+      .then(newCard => setCards([newCard.data, ...cards]))
       .then(closeAllPopups)
   }
 
