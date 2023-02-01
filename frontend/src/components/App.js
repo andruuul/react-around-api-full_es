@@ -21,6 +21,10 @@ function App() {
   const history = useHistory()
   const location = useLocation()
 
+  useEffect(() => {
+    tokenCheck();
+  }, [])
+
   const [currentUser, setCurrentUser] = useState({})
 
 
@@ -153,7 +157,7 @@ function App() {
           setToken(user.token);
           localStorage.setItem('token', user.token);
           handleLogin();
-          redirect();
+          //redirect();
         } else {
           if (!email || !password) {
             throw new Error(
@@ -177,7 +181,7 @@ function App() {
       history.push('/signin');  
     }
   } 
-
+ /*
   useEffect(() => {
     const token = localStorage.getItem('token')
     if(token) {
@@ -191,22 +195,39 @@ function App() {
       } else {
         setLoggedIn(false);
       }
-    }, [loggedIn, token])
+  }, [loggedIn])
+  */
 
-    useEffect(() => {
-      const token = localStorage.getItem('token')
-      if (token) {
-      Promise.all([api.getProfileInfo(token), api.getInitialCards(token)])
-        .then(([info, cards]) => {
-          setCurrentUser(info.user);
-          setCards(cards.data);
+  function tokenCheck() {
+    const token = localStorage.getItem('token')
+    if(token) {
+      auth
+        .checkToken(token)
+        .then((res) => {
+          setEmail(res.email);
+          handleLogin();
+          redirect();
         })
-        .catch((err) => {
-          console.log(err);
-        });} else {
-          console.log("no token")
-        }
-    }, [])
+        .catch((err) => {console.log(err, "Wrong token")});
+      } else {
+        setLoggedIn(false);
+      }
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+    Promise.all([api.getProfileInfo(token), api.getInitialCards(token)])
+      .then(([info, cards]) => {
+        setCurrentUser(info.user);
+        setCards(cards.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });} else {
+        console.log("no token")
+      }
+  }, [loggedIn])
 
   return (
     (

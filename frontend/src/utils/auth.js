@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3001';
+const BASE_URL = 'https://api.around-full.students.nomoredomainssbs.ru';
 
 export const checkStatus = (res) => {
   if (res.ok) {
