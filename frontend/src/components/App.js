@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Switch, Redirect, useHistory, withRouter, useLocation } from 'react-router-dom';
+import { Route, Switch, useHistory, withRouter, useLocation } from 'react-router-dom';
 import '../index.css'
 import Header from './Header';
 import Register from './Register';
@@ -93,6 +93,7 @@ function App() {
       .then((newCard) => {
         setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
       })
+      .catch(err => console.log(err))
   }
 
   function handleCardDelete(cardId) {
@@ -157,7 +158,7 @@ function App() {
           setToken(user.token);
           localStorage.setItem('token', user.token);
           handleLogin();
-          //redirect();
+          redirect();
         } else {
           if (!email || !password) {
             throw new Error(
@@ -215,7 +216,6 @@ function App() {
   }
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
     if (token) {
     Promise.all([api.getProfileInfo(token), api.getInitialCards(token)])
       .then(([info, cards]) => {
@@ -227,81 +227,96 @@ function App() {
       });} else {
         console.log("no token")
       }
-  }, [loggedIn])
+  }, [loggedIn, token])
 
   return (
     (
     <CurrentUserContext.Provider value={currentUser}>
-    <div className="page">
-      <Header
-        email={email}
-        onLogout={handleLogout}
-        linkDescription={location.pathname === '/signup' ? 'Log in' : 'Sign up'}
-        linkTo={location.pathname === '/signup' ? '/signin' : '/signup'}
-        history={history}
-      />
-      <Switch>
-        <ProtectedRoute exact path='/main' component={Main} onEditAvatarClick={handleEditAvatarClick} onAddPlaceClick={handleAddPlaceClick} onEditProfileClick={handleEditProfileClick} onCardClick={handleCardClick} cards={cards} onCardLike={handleCardLike} onCardDelete={handleCardDelete} currentUser={currentUser} />       
-        <Route
-          exact
-          path='/signup'
-          render={() =>
-            localStorage.getItem('token') ? (
-              <Redirect to='/main' />
-            ) : (
-              <Register
-                email={email}
-                password={password}
-                setPassword={setPassword}
-                handleRegisterSubmit={handleRegisterSubmit}
-                setEmail={setEmail}
-              />
-            )
-          }
-        />
-        <Route
-          exact
-          path='/signin'
-          render={() =>
-            localStorage.getItem('token') ? (
-              <Redirect to='/main' />
-            ) : (
-              <Login
-                loggedIn={loggedIn}
-                email={email}
-                password={password}
-                setPassword={setPassword}
-                handleLoginSubmit={handleLoginSubmit}
-                setEmail={setEmail} 
-              />
-            )
-          }
-        />
+      <div className="page">
         <Route exact path='/' render={redirect} />
         <Route path='*' render={redirect} />
-      </Switch>
-
-      <Footer />
-
-      <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} currentUser={currentUser}/>
-      
-      <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
-
-      <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlaceSubmit={handleAddPlaceSubmit} />
-
-      <InfoToolTip
-        isOpen={isInfoToolTipOpen}
-        success={tooltipMode}
-        onClose={closeAllPopups}
-        loggedIn={loggedIn}
-      />
-
-      <PopupWithForm title="Are you sure?" name="confirmation" buttonText="Yes"
-      /*isOpen=""*/
-      onClose={closeAllPopups}/>
-
-      <ImagePopup selectedCard={selectedCard} onClose={closeAllPopups} />
-    </div>
+        <Header
+          email={email}
+          onLogout={handleLogout}
+          linkDescription={location.pathname === '/signup' ? 'Log in' : 'Sign up'}
+          linkTo={location.pathname === '/signup' ? '/signin' : '/signup'}
+          history={history}
+        />
+        {
+          loggedIn ? 
+            <>
+              <ProtectedRoute 
+                exact 
+                path='/main' 
+                component={Main} 
+                onEditAvatarClick={handleEditAvatarClick} 
+                onAddPlaceClick={handleAddPlaceClick} 
+                onEditProfileClick={handleEditProfileClick} 
+                onCardClick={handleCardClick} 
+                cards={cards} 
+                onCardLike={handleCardLike} 
+                onCardDelete={handleCardDelete} 
+                currentUser={currentUser} 
+              />       
+            </> : <>
+              <Switch>
+                <Route exact path='/signup'>
+                  <Register
+                    email={email}
+                    password={password}
+                    setPassword={setPassword}
+                    handleRegisterSubmit={handleRegisterSubmit}
+                    setEmail={setEmail}
+                  />
+                </Route>
+                <Route exact path='/signin'>
+                  <Login
+                    loggedIn={loggedIn}
+                    email={email}
+                    password={password}
+                    setPassword={setPassword}
+                    handleLoginSubmit={handleLoginSubmit}
+                    setEmail={setEmail} 
+                  />
+                </Route>
+              </Switch>
+            </>
+        }
+        <Footer />
+        <EditProfilePopup 
+          isOpen={isEditProfilePopupOpen} 
+          onClose={closeAllPopups} 
+          onUpdateUser={handleUpdateUser} 
+          currentUser={currentUser}
+        />
+        <EditAvatarPopup 
+          isOpen={isEditAvatarPopupOpen} 
+          onClose={closeAllPopups} 
+          onUpdateAvatar={handleUpdateAvatar} 
+        />
+        <AddPlacePopup 
+          isOpen={isAddPlacePopupOpen} 
+          onClose={closeAllPopups} 
+          onAddPlaceSubmit={handleAddPlaceSubmit} 
+        />
+        <InfoToolTip
+          isOpen={isInfoToolTipOpen}
+          success={tooltipMode}
+          onClose={closeAllPopups}
+          loggedIn={loggedIn}
+        />
+        <PopupWithForm 
+          title="Are you sure?" 
+          name="confirmation" 
+          buttonText="Yes"
+          /*isOpen=""*/
+          onClose={closeAllPopups}
+        />
+        <ImagePopup 
+          selectedCard={selectedCard} 
+          onClose={closeAllPopups} 
+        />
+      </div>
     </CurrentUserContext.Provider>
     )
   );

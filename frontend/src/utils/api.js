@@ -112,7 +112,7 @@ export class Api {
 
   changeLikeCardStatus(cardId, isLiked, token) {
     if(isLiked) {
-      return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
+      return this._request(`${this._baseUrl}/cards/${cardId}/likes`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ export class Api {
         },    
       })
     } else {
-      return this._request(`${this._baseUrl}/cards/likes/${cardId}`, {
+      return this._request(`${this._baseUrl}/cards/${cardId}/likes`, {
         method: "PUT",
         headers: {
           'Content-Type': 'application/json',

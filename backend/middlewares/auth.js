@@ -5,7 +5,7 @@ module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    throw new AuthError(`${req.headers.authorization}, NO AUTH Authorization Required`);
+    throw new AuthError(`Authorization required`);
   }
 
   const token = authorization.replace('Bearer ', '');
@@ -14,10 +14,10 @@ module.exports = (req, res, next) => {
   try {
     payload = jwt.verify(
       token,
-      'dev-secret',
+      NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
     );
   } catch (err) {
-    throw new AuthError('Authorization Required');
+    throw new AuthError('Authorization required');
   }
   req.user = payload; // asigna el payload al objeto de solicitud
   next(); // envía la solicitud al siguiente middleware

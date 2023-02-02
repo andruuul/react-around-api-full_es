@@ -4,7 +4,6 @@ import Card from './Card';
 
 
 function Main({onEditAvatarClick, onAddPlaceClick, onEditProfileClick, onCardClick, cards, onCardLike, onCardDelete, currentUser}) {
-
   return (
     <main className="content">
       <section className="profile-grid">
@@ -32,7 +31,6 @@ function Main({onEditAvatarClick, onAddPlaceClick, onEditProfileClick, onCardCli
               onCardClick={onCardClick} 
               onCardLike={onCardLike} 
               onCardDelete={onCardDelete}
-              currentUser={currentUser}
             />
           );
         })}

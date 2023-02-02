@@ -1,6 +1,10 @@
 import React from 'react';
+import { useContext } from 'react';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
-function Card({card, onCardClick, onCardLike, onCardDelete, currentUser, }) { //reduje el número de parámetros que paso
+function Card({card, onCardClick, onCardLike, onCardDelete, key }) { //reduje el número de parámetros que paso
+  const currentUser = useContext(CurrentUserContext);
+
   const isOwn = card.owner._id === currentUser._id;
   const cardDeleteButtonClassName = (`${isOwn ? '' : 'elements-grid__delete-button_hidden'}`)
   const isLiked = card.likes.some(i => i._id === currentUser._id);
@@ -11,7 +15,7 @@ function Card({card, onCardClick, onCardLike, onCardDelete, currentUser, }) { //
   }
 
   function handleLikeClick() {
-    onCardLike(card, isLiked)
+    onCardLike(card)
   }
 
   function handleDeleteClick() {
@@ -19,7 +23,7 @@ function Card({card, onCardClick, onCardLike, onCardDelete, currentUser, }) { //
   }
 
   return ( 
-    <div className="elements-grid__card">
+    <div key={key} className="elements-grid__card">
       <img className="elements-grid__photo" alt={card.name} src={card.link} onClick={handleClick} />
       <button className={`elements-grid__delete-button ${cardDeleteButtonClassName}`} onClick={handleDeleteClick}></button>
       <div className="elements-grid__description">

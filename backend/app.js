@@ -8,6 +8,7 @@ const usersRouter = require('./routes/users');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+require('dotenv').config();
 
 function validateURL(value, helpers) {
   if (validator.isURL(value)) {
