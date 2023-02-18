@@ -118,7 +118,6 @@ function App() {
 
   function handleRegisterSubmit(e) {
     e.preventDefault();
-    console.log(email, password)
     auth
       .register(email, password)
       .then((res) => {
