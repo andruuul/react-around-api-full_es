@@ -133,7 +133,8 @@ export class Api {
 }
 
 const api = new Api({
-  baseUrl: "https://api.around-full.students.nomoredomainssbs.ru",
+  //baseUrl: "https://api.around-full.students.nomoredomainssbs.ru",
+  baseUrl: "http://localhost:3001"
 });
 
 export default api;

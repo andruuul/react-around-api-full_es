@@ -91,7 +91,6 @@ function App() {
     api
       .changeLikeCardStatus(card._id, isLiked, token)
       .then((newCard) => {
-        console.log(newCard)
         setCards((state) => state.map((c) => c._id === card._id ? newCard.data : c));
       })
       .catch(err => console.log(err))
@@ -119,6 +118,7 @@ function App() {
 
   function handleRegisterSubmit(e) {
     e.preventDefault();
+    console.log(email, password)
     auth
       .register(email, password)
       .then((res) => {
@@ -225,9 +225,7 @@ function App() {
       })
       .catch((err) => {
         console.log(err);
-      });} else {
-        console.log("no token")
-      }
+      });}
   }, [loggedIn, token])
 
   return (

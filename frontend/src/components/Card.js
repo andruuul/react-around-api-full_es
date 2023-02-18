@@ -5,14 +5,12 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext';
 function Card({card, onCardClick, onCardLike, onCardDelete, key, cardOwner }) { //reduje el número de parámetros que paso
   const currentUser = useContext(CurrentUserContext);
   const cardOwnerId = cardOwner._id
-  console.log(currentUser._id)
-  console.log(cardOwnerId)
+
 
 
   const isOwn = cardOwnerId === currentUser._id;
   const cardDeleteButtonClassName = (`${isOwn ? '' : 'elements-grid__delete-button_hidden'}`)
   const isLiked = card.likes.some(i => i._id === currentUser._id);
-  console.log(isLiked)
   const cardLikeButtonClassName = (`${isLiked ? 'elements-grid__like-button_active' : ''}`)
 
   function handleClick() {
