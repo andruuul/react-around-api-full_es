@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Switch, useHistory, withRouter, useLocation } from 'react-router-dom';
+import { Route, Switch, useHistory, withRouter, useLocation, Redirect } from 'react-router-dom';
 import '../index.css'
 import Header from './Header';
 import Register from './Register';
@@ -91,7 +91,8 @@ function App() {
     api
       .changeLikeCardStatus(card._id, isLiked, token)
       .then((newCard) => {
-        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+        console.log(newCard)
+        setCards((state) => state.map((c) => c._id === card._id ? newCard.data : c));
       })
       .catch(err => console.log(err))
   }
@@ -179,7 +180,7 @@ function App() {
     if(localStorage.getItem('token')) {
       history.push('/main');
     } else { 
-      history.push('/signin');  
+      history.push('/signin')
     }
   } 
  /*
@@ -233,8 +234,6 @@ function App() {
     (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Route exact path='/' render={redirect} />
-        <Route path='*' render={redirect} />
         <Header
           email={email}
           onLogout={handleLogout}
@@ -279,9 +278,11 @@ function App() {
                     setEmail={setEmail} 
                   />
                 </Route>
+                <Redirect from="/main" to='/signin'></Redirect>
               </Switch>
             </>
         }
+        <Route exact path='/' render={redirect} />
         <Footer />
         <EditProfilePopup 
           isOpen={isEditProfilePopupOpen} 

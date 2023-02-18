@@ -28,6 +28,7 @@ function Main({onEditAvatarClick, onAddPlaceClick, onEditProfileClick, onCardCli
               link={card.link} 
               name={card.name} 
               likes={card.likes} 
+              cardOwner={card.owner}
               onCardClick={onCardClick} 
               onCardLike={onCardLike} 
               onCardDelete={onCardDelete}
